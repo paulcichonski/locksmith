@@ -265,8 +265,11 @@ func unlockHeldLocks(stop chan struct{}, wg *sync.WaitGroup) {
 				break
 			}
 			if !active {
-				reason = fmt.Sprintf("%v are inactive", etcdServices)
-				break
+				_, err := getClient()
+				if err != nil {
+					reason = fmt.Sprintf("%v are inactive and remote cluster not available", etcdServices)
+					break
+				}
 			}
 
 			lck, err := setupLock()
